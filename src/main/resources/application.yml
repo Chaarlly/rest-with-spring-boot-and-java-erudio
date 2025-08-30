@@ -15,3 +15,17 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
     show-sql: false
+    open-in-view: false
+
+  devtools:
+    restart:
+      enabled: false   # desativa reinício automático
+    livereload:
+      enabled: false   # desativa LiveReload
+
+logging:
+  level:
+    #root: WARN                 # nível padrão WARN/ERROR
+    br.com.erudio: DEBUG        # seu pacote só mostra WARN/ERROR
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"
