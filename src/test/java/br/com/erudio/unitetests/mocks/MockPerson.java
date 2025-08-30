@@ -3,7 +3,7 @@ package br.com.erudio.unitetests.mocks;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.com.erudio.dto.PersonDTO;
+import br.com.erudio.dto.v1.PersonDTO;
 import br.com.erudio.model.Person;
 
 public class MockPerson {

@@ -3,6 +3,7 @@ package br.com.erudio.model;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity
@@ -20,6 +21,9 @@ public class Person implements Serializable {
 
     @Column(name = "last_name", nullable = false,  length = 80)
     private String lastName;
+
+    @Column(name = "birthday") // Ao migrar os clientes para a V2 > nullable false
+    private LocalDate birthDay;
 
     @Column(name = "address",  nullable = false,  length = 100)
     private String address;
@@ -69,14 +73,22 @@ public class Person implements Serializable {
         this.gender = gender;
     }
 
+    public LocalDate getBirthDay() {
+        return birthDay;
+    }
+
+    public void setBirthDay(LocalDate birthDay) {
+        this.birthDay = birthDay;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Person person)) return false;
-        return Objects.equals(id, person.id) && Objects.equals(firstName, person.firstName) && Objects.equals(lastName, person.lastName) && Objects.equals(address, person.address) && Objects.equals(gender, person.gender);
+        return Objects.equals(id, person.id) && Objects.equals(firstName, person.firstName) && Objects.equals(lastName, person.lastName) && Objects.equals(birthDay, person.birthDay) && Objects.equals(address, person.address) && Objects.equals(gender, person.gender);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstName, lastName, address, gender);
+        return Objects.hash(id, firstName, lastName, birthDay, address, gender);
     }
 }

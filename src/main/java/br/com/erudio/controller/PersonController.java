@@ -1,6 +1,7 @@
 package br.com.erudio.controller;
 
-import br.com.erudio.dto.PersonDTO;
+import br.com.erudio.dto.v1.PersonDTO;
+import br.com.erudio.dto.v2.PersonDTOV2;
 import br.com.erudio.exception.ResourceNotFoundException;
 import br.com.erudio.model.Person;
 import br.com.erudio.repository.PersonRepository;
@@ -23,34 +24,29 @@ public class PersonController {
 
     @Autowired
     private PersonRepository repository;
-    // private PersonServices service = new PersonServices();
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public List<PersonDTO> findAll() {
         return service.findAll();
     }
 
-    @GetMapping(value = "/{id}",
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public PersonDTO findById(@PathVariable("id") Long id) {
         return service.findById(id);
     }
 
-    @PostMapping(
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public PersonDTO create(@RequestBody PersonDTO person) {
         return service.create(person);
     }
 
-    @PutMapping(value = "/{id}",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    public PersonDTO update(@PathVariable("id") Long id, @RequestBody PersonDTO person) {
+    @PostMapping(value = "/v2", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public PersonDTOV2 createV2(@RequestBody PersonDTOV2 person) {
+        return service.createV2(person);
+    }
 
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public PersonDTO update(@PathVariable("id") Long id, @RequestBody PersonDTO person) {
         Person entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
 
@@ -61,8 +57,6 @@ public class PersonController {
 
         return parseObject(repository.save(entity), PersonDTO.class);
     }
-
-
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<?> delete(@PathVariable("id") Long id) {
