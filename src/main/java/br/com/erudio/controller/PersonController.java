@@ -1,6 +1,9 @@
 package br.com.erudio.controller;
 
+import br.com.erudio.dto.PersonDTO;
+import br.com.erudio.exception.ResourceNotFoundException;
 import br.com.erudio.model.Person;
+import br.com.erudio.repository.PersonRepository;
 import br.com.erudio.service.PersonServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -9,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static br.com.erudio.mapper.ObjectMapper.parseObject;
+
 @RestController
 @RequestMapping("/person")
 public class PersonController {
@@ -16,41 +21,51 @@ public class PersonController {
     @Autowired
     private PersonServices service;
 
-    // GET para buscar por id
-    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Person> findById(@PathVariable("id") Long id) {
-        Person person = service.findById(id);
-        return ResponseEntity.ok(person);
+    @Autowired
+    private PersonRepository repository;
+    // private PersonServices service = new PersonServices();
+
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<PersonDTO> findAll() {
+        return service.findAll();
     }
 
-    // GET para buscar todos
-    @GetMapping(value = "/findall", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Person>> findAll() {
-        List<Person> persons = service.findAll();
-        return ResponseEntity.ok(persons);
+    @GetMapping(value = "/{id}",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public PersonDTO findById(@PathVariable("id") Long id) {
+        return service.findById(id);
     }
 
-    // POST para criar
-    @PostMapping(value = "/create",
+    @PostMapping(
             consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Person> create(@RequestBody Person person) {
-        Person created = service.create(person);
-        return ResponseEntity.ok(created);
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public PersonDTO create(@RequestBody PersonDTO person) {
+        return service.create(person);
     }
 
-    // PUT para atualizar
-    @PutMapping(value = "/update/{id}",
+    @PutMapping(value = "/{id}",
             consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Person> update(@PathVariable("id") Long id, @RequestBody Person person) {
-        Person updated = service.update(id, person);
-        return ResponseEntity.ok(updated);
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public PersonDTO update(@PathVariable("id") Long id, @RequestBody PersonDTO person) {
+
+        Person entity = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
+
+        entity.setFirstName(person.getFirstName());
+        entity.setLastName(person.getLastName());
+        entity.setAddress(person.getAddress());
+        entity.setGender(person.getGender());
+
+        return parseObject(repository.save(entity), PersonDTO.class);
     }
 
-    // DELETE para remover
-    @DeleteMapping(value = "/delete/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+
+
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<?> delete(@PathVariable("id") Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
