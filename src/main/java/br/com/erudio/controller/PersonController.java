@@ -8,46 +8,54 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("person")
+@RequestMapping("/person")
 public class PersonController {
 
     @Autowired
     private PersonServices service;
 
+    // POST para buscar por id (modo legado)
     @RequestMapping(value = "/{id}",
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Person> findById(@PathVariable("id") Long id) {
-        return ResponseEntity.ok().body(service.findById(id));
+    public ResponseEntity<Optional<Person>> findById(@PathVariable("id") Long id) {
+        Optional<Person> person = Optional.ofNullable(service.findById(id));
+        return ResponseEntity.ok(person);
     }
 
+    // POST para buscar todos (modo legado)
     @RequestMapping(value = "/findall",
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Person>> findAll() {
-        return ResponseEntity.ok().body(service.findAll());
+        List<Person> persons = service.findAll();
+        return ResponseEntity.ok(persons);
     }
 
+    // POST para criar
     @RequestMapping(value = "/create",
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Person> create(@RequestBody Person person) {
-
-        return ResponseEntity.ok().body(service.create(person));
+        Person created = service.create(person);
+        return ResponseEntity.ok(created);
     }
 
+    // PUT para atualizar
     @RequestMapping(value = "/update/{id}",
             method = RequestMethod.PUT,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Person> update(@RequestBody Person person,  @PathVariable("id") Long id) {
-
-        return ResponseEntity.ok().body(service.update(person));
+    public ResponseEntity<Person> update(@PathVariable("id") Long id, @RequestBody Person person) {
+        Person updated = service.update(id, person);
+        return ResponseEntity.ok(updated);
     }
 
+    // DELETE para remover
     @RequestMapping(value = "/delete/{id}",
             method = RequestMethod.DELETE,
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -55,5 +63,4 @@ public class PersonController {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
-
 }
