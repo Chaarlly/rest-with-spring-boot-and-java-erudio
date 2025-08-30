@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import static br.com.erudio.request.converts.NumberConverter.convertToDouble;
 
 @RestController
-@RequestMapping("math")
+@RequestMapping("/api/math/v1")
 public class MathController {
 
     private SimpleMath math = new SimpleMath();

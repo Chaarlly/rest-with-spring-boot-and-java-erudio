@@ -16,7 +16,7 @@ import java.util.List;
 import static br.com.erudio.mapper.ObjectMapper.parseObject;
 
 @RestController
-@RequestMapping("/person")
+@RequestMapping("/api/person/v1")
 public class PersonController {
 
     @Autowired
